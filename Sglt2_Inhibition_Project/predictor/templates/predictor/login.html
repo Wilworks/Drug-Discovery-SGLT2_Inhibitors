@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - SGLT2 Inhibitor Prediction</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #0A84FF;
+            --accent-blue: #3EC1FF;
+            --bg-gradient: linear-gradient(135deg, #0A84FF, #3EC1FF);
+            --glass-white: rgba(255, 255, 255, 0.25);
+            --border-glass: rgba(255, 255, 255, 0.4);
+            --text-dark: #0A1F44;
+            --text-light: #FFFFFF;
+            --shadow: rgba(10, 31, 68, 0.2);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .glass-card {
+            background: var(--glass-white);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            box-shadow: 0 4px 20px var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 25px var(--shadow);
+        }
+
+        .form-control {
+            background: var(--glass-white);
+            border: 1px solid var(--border-glass);
+            color: var(--text-dark);
+            border-radius: 12px;
+        }
+
+        .form-control::placeholder {
+            color: rgba(10, 31, 68, 0.6);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 0.2rem rgba(10, 132, 255, 0.25);
+        }
+
+        .btn-custom {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .btn-custom:hover {
+            background: var(--accent-blue);
+            box-shadow: 0 0 15px rgba(10, 132, 255, 0.4);
+        }
+
+        h2 {
+            color: var(--text-light);
+            font-weight: 700;
+        }
+
+        .text-white {
+            color: var(--text-light) !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="glass-card p-5">
+                    <h2 class="text-center mb-4">Login</h2>
+
+                    {% if form.errors %}
+                        <div class="alert alert-danger" style="background: rgba(255, 0, 0, 0.1); border: 1px solid rgba(255, 0, 0, 0.3); color: #ff6b6b;">
+                            <strong>Error:</strong> Invalid username or password.
+                        </div>
+                    {% endif %}
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label" style="color: var(--text-light);">Username</label>
+                            <input type="text" class="form-control" id="id_username" name="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_password" class="form-label" style="color: var(--text-light);">Password</label>
+                            <input type="password" class="form-control" id="id_password" name="password" required>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-custom btn-lg">Login</button>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <a href="{% url 'landing' %}" class="text-white">Back to Home</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

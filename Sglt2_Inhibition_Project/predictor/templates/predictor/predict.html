@@ -1,0 +1,222 @@
+h<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict SGLT2 Inhibitor Activity</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #0A84FF;
+            --accent-blue: #3EC1FF;
+            --bg-gradient: linear-gradient(135deg, #0A84FF, #3EC1FF);
+            --glass-white: rgba(255, 255, 255, 0.25);
+            --border-glass: rgba(255, 255, 255, 0.4);
+            --text-dark: #0A1F44;
+            --text-light: #FFFFFF;
+            --shadow: rgba(10, 31, 68, 0.2);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-light);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: var(--glass-white);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--border-glass);
+        }
+
+        .glass-card {
+            background: var(--glass-white);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            box-shadow: 0 4px 20px var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 25px var(--shadow);
+        }
+
+        .btn-custom {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .btn-custom:hover {
+            background: var(--accent-blue);
+            box-shadow: 0 0 15px rgba(10, 132, 255, 0.4);
+        }
+
+        .result-card {
+            background: var(--glass-white);
+            border-radius: 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            box-shadow: 0 4px 20px var(--shadow);
+        }
+
+        .form-control {
+            background: var(--glass-white);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 0.2rem rgba(10, 132, 255, 0.25);
+        }
+
+        h1, h2, h3 {
+            color: var(--text-light);
+            font-weight: 700;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'landing' %}" style="color: var(--primary-blue); font-weight: 700;">SGLT2 Predictor</a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="{% url 'logout' %}" style="color: var(--text-light);">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="glass-card p-4">
+                    <h2 class="text-center mb-4">Predict SGLT2 Inhibitor Activity</h2>
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="smiles" class="form-label" style="font-weight: 600;">SMILES String *</label>
+                                <input type="text" class="form-control" id="smiles" name="smiles" value="{{ smiles }}" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="cid" class="form-label" style="font-weight: 600;">CID (Optional)</label>
+                                <input type="text" class="form-control" id="cid" name="cid" value="{{ cid }}">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="sid" class="form-label" style="font-weight: 600;">SID (Optional)</label>
+                                <input type="text" class="form-control" id="sid" name="sid" value="{{ sid }}">
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-custom btn-lg">Predict Activity</button>
+                        </div>
+                    </form>
+
+                    {% if model_results %}
+                        <hr class="my-5" style="border-color: var(--border-glass);">
+                        <h3 class="text-center mb-4">Compound Information</h3>
+                        <div class="glass-card p-4 mb-4">
+                            <div class="table-responsive">
+                                <table class="table table-borderless">
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>SMILES:</strong></td>
+                                            <td>{{ smiles }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>CID:</strong></td>
+                                            <td>{{ cid|default:"Not provided" }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>SID:</strong></td>
+                                            <td>{{ sid|default:"Not provided" }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <h3 class="text-center mb-4">Prediction Results</h3>
+                        <div class="row">
+                            {% for model_result in model_results %}
+                                <div class="col-md-6 mb-4">
+                                    <div class="result-card p-3">
+                                        <h5 style="color: var(--primary-blue); font-weight: 600;">{{ model_result.name }}</h5>
+                                        <p class="mb-2"><strong>Predicted Activity:</strong> {{ model_result.activity }}</p>
+
+                                        {% if model_result.scores %}
+                                            <div class="mb-3">
+                                                <strong>Prediction Scores:</strong>
+                                                {% if model_result.scores.active %}
+                                                    <div class="d-flex justify-content-between">
+                                                        <span>Active:</span>
+                                                        <span>{{ model_result.scores.active|floatformat:3 }}</span>
+                                                    </div>
+                                                    <div class="d-flex justify-content-between">
+                                                        <span>Inactive:</span>
+                                                        <span>{{ model_result.scores.inactive|floatformat:3 }}</span>
+                                                    </div>
+                                                {% else %}
+                                                    <div class="d-flex justify-content-between">
+                                                        <span>Score:</span>
+                                                        <span>{{ model_result.scores.score|floatformat:3 }}</span>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        {% endif %}
+
+                                        {% if model_result.shap_features %}
+                                            <div class="mb-3">
+                                                <strong>Top 5 SHAP Features:</strong>
+                                                {% for feature_data in model_result.shap_features %}
+                                                    <div class="mb-2">
+                                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                                            <small>{{ feature_data.feature }}</small>
+                                                            <small>{{ feature_data.value|floatformat:3 }}</small>
+                                                        </div>
+                                                        <div class="progress" style="height: 8px;">
+                                                            <div class="progress-bar" role="progressbar"
+                                                                 style="width: {{ feature_data.percentage }}%; background: linear-gradient(90deg, #0A84FF, #3EC1FF);"
+                                                                 aria-valuenow="{{ feature_data.percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
